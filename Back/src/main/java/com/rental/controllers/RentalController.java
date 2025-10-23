@@ -34,7 +34,8 @@ public class RentalController {
     }
 
     @Operation(summary = "Création d’un logement",
-            description = "Permet de créer un logement. Les champs textuels sont envoyés via FormData, et la photo du logement est un fichier multipart.")
+            description = "Permet de créer un logement. Les champs textuels sont envoyés via FormData, et la photo du logement est un fichier multipart.<br/>" +
+                    "Pour tester laisser le champs « picturePath » vide.")
     @ApiResponse(responseCode = Constants.API_STATUS_OK, description = "Logement créé avec succès",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = RentalResponse.class)))
     @ApiResponse(responseCode = Constants.API_STATUS_UNAUTHORIZED, description = Constants.USER_UNAUTHORIZED,
@@ -80,7 +81,6 @@ public class RentalController {
         return ResponseEntity.ok(rentalService.getAllRentals());
     }
 
-    @GetMapping("/rentals/{id}")
     @Operation(summary = "Détails d’un logement",
             description = "Renvoie les informations détaillées d’un logement à partir de son ID.")
     @ApiResponse(responseCode = Constants.API_STATUS_OK, description = "Détails du logement récupérés avec succès",
@@ -89,12 +89,14 @@ public class RentalController {
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = Constants.API_STATUS_NOT_FOUND, description = Constants.RENTAL_NOT_FOUND_FR,
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class)))
+    @GetMapping("/rentals/{id}")
     public ResponseEntity<RentalDto> getRentalById(@PathVariable Long id) {
         return ResponseEntity.ok(rentalService.getRentalById(id));
     }
 
     @Operation(summary = "Mise à jour d’un logement",
-            description = "Permet de modifier les informations d’un logement existant, sans modifier l’image.")
+            description = "Permet de modifier les informations d’un logement existant, sans modifier l’image.<br>" +
+                    "Dans le paramètre « rentalRequest » supprimer les données « picture » et « picturePath » pour tester")
     @ApiResponse(responseCode = Constants.API_STATUS_OK, description = "Logement mis à jour avec succès",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = RentalResponse.class)))
     @ApiResponse(responseCode = Constants.API_STATUS_UNAUTHORIZED, description = Constants.USER_UNAUTHORIZED,
