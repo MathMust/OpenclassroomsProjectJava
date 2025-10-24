@@ -4,10 +4,10 @@ services:
     container_name: mysql_docker
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: Opc2025$
-      MYSQL_DATABASE: rental
-      MYSQL_USER: user
-      MYSQL_PASSWORD: Opc2025$
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
