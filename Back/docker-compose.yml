@@ -1,0 +1,22 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_docker
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Opc2025$
+      MYSQL_DATABASE: rental
+      MYSQL_USER: user
+      MYSQL_PASSWORD: Opc2025$
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
+
+volumes:
+  mysql_data:
+
+networks:
+  app-network:

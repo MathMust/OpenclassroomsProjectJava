@@ -2,6 +2,7 @@ package com.rental.controllers;
 
 import com.rental.constants.Constants;
 import com.rental.dto.*;
+import com.rental.exception.InvalidImageException;
 import com.rental.services.RentalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -40,6 +41,8 @@ public class RentalController {
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = RentalResponse.class)))
     @ApiResponse(responseCode = Constants.API_STATUS_UNAUTHORIZED, description = Constants.USER_UNAUTHORIZED,
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class)))
+    @ApiResponse(responseCode = Constants.API_INTERNAL_SERVER_ERROR, description = "Le fichier doit être une image valide et son extension doit être autorisée (.jpg, .jpeg, .png, .gif)",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class)))
     @PostMapping(value = "/rentals", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createRental(@ModelAttribute RentalRequest rentalRequest,
                                           Authentication authentication,
@@ -50,6 +53,23 @@ public class RentalController {
         String pictureUrl = null;
 
         if (picture != null && !picture.isEmpty()) {
+            String contentType = picture.getContentType();
+
+            // Vérifie le type MIME
+            if (contentType == null || !contentType.startsWith("image/")) {
+                throw new InvalidImageException("The file must be a valid image (jpg, jpeg, png, gif.)");
+            }
+
+            // Vérifie l’extension du fichier
+            String originalFilename = picture.getOriginalFilename();
+            if (originalFilename == null ||
+                    !(originalFilename.toLowerCase().endsWith(".jpg")
+                            || originalFilename.toLowerCase().endsWith(".jpeg")
+                            || originalFilename.toLowerCase().endsWith(".png")
+                            || originalFilename.toLowerCase().endsWith(".gif"))) {
+                throw new InvalidImageException("Unsupported file extension (allowed: .jpg, .jpeg, .png, .gif)");
+            }
+
             String fileName = System.currentTimeMillis() + "_" + picture.getOriginalFilename();
             Path uploadPath = Paths.get(System.getProperty("user.dir")).resolve(uploadDir);
             Files.createDirectories(uploadPath);

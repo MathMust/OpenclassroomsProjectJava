@@ -29,7 +29,7 @@ public class Rental {
     @Column(name = "picture")
     private String picture;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 2000)
     private String description;
 
     @ManyToOne
